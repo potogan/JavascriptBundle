@@ -1,3 +1,0 @@
-[submodule "Resources/public/behaviour"]
-	path = Resources/public/behaviour
-	url = git@github.com:potogan/js-behaviour.git
