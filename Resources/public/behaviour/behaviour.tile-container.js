@@ -417,6 +417,8 @@
 				if (tile) {
 					this.showTile(tile);
 				}
+				
+				event.preventDefault();
 			}
 		},
 
