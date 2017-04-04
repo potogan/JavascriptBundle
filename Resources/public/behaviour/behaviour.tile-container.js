@@ -308,7 +308,7 @@
 		 *
 		 * @return jQuery = loaded tile
 		 */
-		loadTile: function (content, name) {
+		loadTile: function (content, name, originatorEvent) {
 			var tile,
 				that = this,
 				e
@@ -320,7 +320,8 @@
 				var displayed = tile === this.displayedTiles[this.displayedTiles.length - 1];
 
 				e = this.triggerTileEvent(tile, 'tile-refresh', {
-					displayed: displayed
+					displayed: displayed,
+					originatorEvent: originatorEvent
 				});
 
 				if (!e.isDefaultPrevented()) {
@@ -340,7 +341,8 @@
 					}
 
 					this.triggerTileEvent(tile, 'tile-refreshed', {
-						displayed: displayed
+						displayed: displayed,
+						originatorEvent: originatorEvent
 					});
 				}
 			} else {
@@ -358,7 +360,9 @@
 					tile.attr('tile-name', name);
 				}
 
-				this.triggerTileEvent(tile, 'tile-loaded');
+				this.triggerTileEvent(tile, 'tile-loaded', {
+					originatorEvent: originatorEvent
+				});
 			}
 
 			return tile;
@@ -387,7 +391,6 @@
 					marginTop: infos.initialMargin + 'px'
 				});
 			}
-
 			
 			infos.initialMargin = parseInt(tile.css('margin-top'));
 
@@ -412,7 +415,7 @@
 
 		onAjaxSuccess: function (event) {
 			if (event.parsedResponse && event.parsedResponse.tile) {
-				var tile = this.loadTile(event.parsedResponse.tile, event.parsedResponse.tileName);
+				var tile = this.loadTile(event.parsedResponse.tile, event.parsedResponse.tileName, event);
 
 				if (tile) {
 					this.showTile(tile);
@@ -462,6 +465,11 @@
 			var event = $.Event(name, props);
 
 			tile.trigger(event);
+
+			if (props.originatorEvent && props.originatorEvent.originator) {
+				var sub = $.Event(name, props);
+				props.originatorEvent.originator.trigger(sub);
+			}
 
 			return event;
 		}
